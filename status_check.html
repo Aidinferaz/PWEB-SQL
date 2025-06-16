@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Status Check - Pendaftaran Siswa</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .status-check {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .check-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        .status-ok { color: #28a745; }
+        .status-error { color: #dc3545; }
+        .status-warning { color: #ffc107; }
+    </style>
+</head>
+<body class="status-check">
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-md-10">
+                <div class="check-card p-4">
+                    <div class="text-center mb-4">
+                        <h2><i class="fas fa-clipboard-check me-2"></i>System Status Check</h2>
+                        <p class="text-muted">Memeriksa status sistem pendaftaran siswa</p>
+                    </div>
+
+                    <div id="status-results">
+                        <!-- Results will be loaded here -->
+                    </div>
+
+                    <div class="text-center mt-4">
+                        <button onclick="runCheck()" class="btn btn-primary btn-lg">
+                            <i class="fas fa-sync-alt me-2"></i>Refresh Status
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function runCheck() {
+            const results = document.getElementById('status-results');
+            results.innerHTML = '<div class="text-center"><i class="fas fa-spinner fa-spin fa-2x"></i><p class="mt-2">Checking system status...</p></div>';
+
+            const checks = [
+                {
+                    name: 'PHP Version',
+                    test: () => checkPHP(),
+                    icon: 'fab fa-php'
+                },
+                {
+                    name: 'Database Connection',
+                    test: () => checkDatabase(),
+                    icon: 'fas fa-database'
+                },
+                {
+                    name: 'Upload Directory',
+                    test: () => checkUploadDir(),
+                    icon: 'fas fa-folder-open'
+                },
+                {
+                    name: 'Required Files',
+                    test: () => checkFiles(),
+                    icon: 'fas fa-file-code'
+                },
+                {
+                    name: 'Database Tables',
+                    test: () => checkTables(),
+                    icon: 'fas fa-table'
+                }
+            ];
+
+            let html = '<div class="row">';
+            
+            checks.forEach((check, index) => {
+                setTimeout(() => {
+                    check.test().then(result => {
+                        const statusClass = result.status === 'ok' ? 'status-ok' : 
+                                          result.status === 'warning' ? 'status-warning' : 'status-error';
+                        const statusIcon = result.status === 'ok' ? 'fas fa-check-circle' : 
+                                         result.status === 'warning' ? 'fas fa-exclamation-triangle' : 'fas fa-times-circle';
+                        
+                        const cardHtml = `
+                            <div class="col-md-6 mb-3">
+                                <div class="card h-100">
+                                    <div class="card-body">
+                                        <h6><i class="${check.icon} me-2"></i>${check.name}</h6>
+                                        <p class="${statusClass}">
+                                            <i class="${statusIcon} me-1"></i>${result.message}
+                                        </p>
+                                        ${result.details ? `<small class="text-muted">${result.details}</small>` : ''}
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                        
+                        html += cardHtml;
+                        
+                        if (index === checks.length - 1) {
+                            html += '</div>';
+                            results.innerHTML = html;
+                        }
+                    });
+                }, index * 500);
+            });
+        }
+
+        async function checkPHP() {
+            try {
+                const response = await fetch('php/test_connection.php');
+                if (response.ok) {
+                    return { status: 'ok', message: 'PHP is working correctly' };
+                }
+                return { status: 'error', message: 'PHP server error' };
+            } catch (error) {
+                return { status: 'error', message: 'Cannot connect to PHP server' };
+            }
+        }
+
+        async function checkDatabase() {
+            try {
+                const response = await fetch('php/test_connection.php');
+                const text = await response.text();
+                if (text.includes('success') || text.includes('Connection successful')) {
+                    return { status: 'ok', message: 'Database connection successful' };
+                }
+                return { status: 'error', message: 'Database connection failed', details: 'Check MySQL service' };
+            } catch (error) {
+                return { status: 'error', message: 'Cannot test database connection' };
+            }
+        }
+
+        async function checkUploadDir() {
+            try {
+                const response = await fetch('uploads/README.md');
+                if (response.ok) {
+                    return { status: 'ok', message: 'Upload directory accessible' };
+                }
+                return { status: 'warning', message: 'Upload directory may not exist' };
+            } catch (error) {
+                return { status: 'error', message: 'Upload directory not accessible' };
+            }
+        }
+
+        async function checkFiles() {
+            const requiredFiles = [
+                'php/config.php',
+                'php/install_fixed.php',
+                'php/proses_daftar.php',
+                'css/style.css',
+                'js/script.js'
+            ];
+            
+            let missingFiles = [];
+            
+            for (let file of requiredFiles) {
+                try {
+                    const response = await fetch(file, { method: 'HEAD' });
+                    if (!response.ok) {
+                        missingFiles.push(file);
+                    }
+                } catch (error) {
+                    missingFiles.push(file);
+                }
+            }
+            
+            if (missingFiles.length === 0) {
+                return { status: 'ok', message: 'All required files found' };
+            } else {
+                return { 
+                    status: 'error', 
+                    message: `${missingFiles.length} files missing`,
+                    details: missingFiles.join(', ')
+                };
+            }
+        }
+
+        async function checkTables() {
+            try {
+                const response = await fetch('php/get_statistics.php');
+                if (response.ok) {
+                    return { status: 'ok', message: 'Database tables accessible' };
+                }
+                return { status: 'warning', message: 'Database tables may not exist', details: 'Run install_fixed.php' };
+            } catch (error) {
+                return { status: 'error', message: 'Cannot access database tables' };
+            }
+        }
+
+        // Run check on page load
+        document.addEventListener('DOMContentLoaded', runCheck);
+    </script>
+</body>
+</html>

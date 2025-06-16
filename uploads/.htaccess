@@ -1,0 +1,16 @@
+# Protect uploads directory
+<Files "*">
+    # Only allow image files
+    <RequireAll>
+        Require expr "%{REQUEST_URI} =~ m#\.(jpe?g|png|gif)$#i"
+    </RequireAll>
+</Files>
+
+# Prevent execution of PHP files
+<Files "*.php">
+    Order Allow,Deny
+    Deny from all
+</Files>
+
+# Prevent directory browsing
+Options -Indexes

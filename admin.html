@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - SMA Negeri 1</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">
+                <i class="fas fa-graduation-cap me-2"></i>
+                SMA Negeri 1
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="daftar.html">Pendaftaran</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="data-siswa.html">Data Siswa</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="admin.html">Admin</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Login Section (akan disembunyikan setelah login) -->
+    <section id="loginSection" class="py-5 bg-light">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-6 col-lg-4">
+                    <div class="card shadow">
+                        <div class="card-header bg-primary text-white text-center">
+                            <h4 class="mb-0">
+                                <i class="fas fa-shield-alt me-2"></i>Login Admin
+                            </h4>
+                        </div>
+                        <div class="card-body p-4">
+                            <form id="loginForm">
+                                <div class="mb-3">
+                                    <label for="username" class="form-label">Username</label>
+                                    <input type="text" class="form-control" id="username" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="password" class="form-label">Password</label>
+                                    <input type="password" class="form-control" id="password" required>
+                                </div>
+                                <div class="d-grid">
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-sign-in-alt me-2"></i>Login
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Admin Panel (akan ditampilkan setelah login) -->
+    <section id="adminPanel" class="py-5" style="display: none;">
+        <div class="container-fluid">
+            <div class="row">
+                <!-- Sidebar -->
+                <div class="col-md-3 col-lg-2">
+                    <div class="card">
+                        <div class="card-header bg-primary text-white">
+                            <h6 class="mb-0">Menu Admin</h6>
+                        </div>
+                        <div class="list-group list-group-flush">
+                            <a href="#dashboard" class="list-group-item list-group-item-action active" onclick="showSection('dashboard')">
+                                <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+                            </a>
+                            <a href="#kelola-siswa" class="list-group-item list-group-item-action" onclick="showSection('kelola-siswa')">
+                                <i class="fas fa-users me-2"></i>Kelola Siswa
+                            </a>
+                            <a href="#laporan" class="list-group-item list-group-item-action" onclick="showSection('laporan')">
+                                <i class="fas fa-chart-bar me-2"></i>Laporan
+                            </a>
+                            <a href="#pengaturan" class="list-group-item list-group-item-action" onclick="showSection('pengaturan')">
+                                <i class="fas fa-cog me-2"></i>Pengaturan
+                            </a>
+                            <a href="#" class="list-group-item list-group-item-action text-danger" onclick="logout()">
+                                <i class="fas fa-sign-out-alt me-2"></i>Logout
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Main Content -->
+                <div class="col-md-9 col-lg-10">
+                    <!-- Dashboard Section -->
+                    <div id="dashboard" class="content-section">
+                        <div class="card">
+                            <div class="card-header bg-primary text-white">
+                                <h5 class="mb-0">
+                                    <i class="fas fa-tachometer-alt me-2"></i>Dashboard Admin
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <!-- Statistics Row -->
+                                <div class="row mb-4">
+                                    <div class="col-md-3">
+                                        <div class="card bg-primary text-white">
+                                            <div class="card-body text-center">
+                                                <h3 class="card-title" id="dashTotalSiswa">0</h3>
+                                                <p class="card-text">Total Pendaftar</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="card bg-warning text-white">
+                                            <div class="card-body text-center">
+                                                <h3 class="card-title" id="dashTotalPending">0</h3>
+                                                <p class="card-text">Menunggu Verifikasi</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="card bg-success text-white">
+                                            <div class="card-body text-center">
+                                                <h3 class="card-title" id="dashTotalDiterima">0</h3>
+                                                <p class="card-text">Diterima</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="card bg-danger text-white">
+                                            <div class="card-body text-center">
+                                                <h3 class="card-title" id="dashTotalDitolak">0</h3>
+                                                <p class="card-text">Ditolak</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Recent Applications -->
+                                <div class="row">
+                                    <div class="col-12">
+                                        <h6 class="border-bottom pb-2 mb-3">Pendaftar Terbaru</h6>
+                                        <div class="table-responsive">
+                                            <table class="table table-striped">
+                                                <thead>
+                                                    <tr>
+                                                        <th>No. Pendaftaran</th>
+                                                        <th>Nama</th>
+                                                        <th>Jurusan</th>
+                                                        <th>Status</th>
+                                                        <th>Tanggal</th>
+                                                        <th>Aksi</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="recentApplications">
+                                                    <!-- Data akan dimuat via AJAX -->
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Kelola Siswa Section -->
+                    <div id="kelola-siswa" class="content-section" style="display: none;">
+                        <div class="card">
+                            <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0">
+                                    <i class="fas fa-users me-2"></i>Kelola Data Siswa
+                                </h5>
+                                <button class="btn btn-warning btn-sm" onclick="refreshKelolaSiswa()">
+                                    <i class="fas fa-refresh me-1"></i>Refresh
+                                </button>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table id="tableKelolaSiswa" class="table table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th>No. Pendaftaran</th>
+                                                <th>Nama</th>
+                                                <th>Jurusan</th>
+                                                <th>Nilai</th>
+                                                <th>Status</th>
+                                                <th>Aksi</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <!-- Data akan dimuat via AJAX -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Laporan Section -->
+                    <div id="laporan" class="content-section" style="display: none;">
+                        <div class="card">
+                            <div class="card-header bg-primary text-white">
+                                <h5 class="mb-0">
+                                    <i class="fas fa-chart-bar me-2"></i>Laporan Pendaftaran
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row mb-4">
+                                    <div class="col-md-6">
+                                        <div class="card">
+                                            <div class="card-header">
+                                                <h6 class="mb-0">Laporan Per Jurusan</h6>
+                                            </div>
+                                            <div class="card-body">
+                                                <canvas id="chartJurusan" width="400" height="200"></canvas>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="card">
+                                            <div class="card-header">
+                                                <h6 class="mb-0">Laporan Per Status</h6>
+                                            </div>
+                                            <div class="card-body">
+                                                <canvas id="chartStatus" width="400" height="200"></canvas>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="d-flex gap-2">
+                                    <button class="btn btn-success" onclick="exportLaporan('excel')">
+                                        <i class="fas fa-file-excel me-1"></i>Export Excel
+                                    </button>
+                                    <button class="btn btn-danger" onclick="exportLaporan('pdf')">
+                                        <i class="fas fa-file-pdf me-1"></i>Export PDF
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Pengaturan Section -->
+                    <div id="pengaturan" class="content-section" style="display: none;">
+                        <div class="card">
+                            <div class="card-header bg-primary text-white">
+                                <h5 class="mb-0">
+                                    <i class="fas fa-cog me-2"></i>Pengaturan Sistem
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <form id="pengaturanForm">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <h6 class="border-bottom pb-2 mb-3">Pengaturan Pendaftaran</h6>
+                                            
+                                            <div class="mb-3">
+                                                <label for="statusPendaftaran" class="form-label">Status Pendaftaran</label>
+                                                <select class="form-select" id="statusPendaftaran">
+                                                    <option value="1">Buka</option>
+                                                    <option value="0">Tutup</option>
+                                                </select>
+                                            </div>
+
+                                            <div class="mb-3">
+                                                <label for="batasNilai" class="form-label">Batas Minimum Nilai</label>
+                                                <input type="number" class="form-control" id="batasNilai" value="75" step="0.1">
+                                            </div>
+
+                                            <div class="mb-3">
+                                                <label for="kapasitasIPA" class="form-label">Kapasitas IPA</label>
+                                                <input type="number" class="form-control" id="kapasitasIPA" value="108">
+                                            </div>
+
+                                            <div class="mb-3">
+                                                <label for="kapasitasIPS" class="form-label">Kapasitas IPS</label>
+                                                <input type="number" class="form-control" id="kapasitasIPS" value="72">
+                                            </div>
+
+                                            <div class="mb-3">
+                                                <label for="kapasitasBahasa" class="form-label">Kapasitas Bahasa</label>
+                                                <input type="number" class="form-control" id="kapasitasBahasa" value="36">
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <h6 class="border-bottom pb-2 mb-3">Pengaturan Admin</h6>
+                                            
+                                            <div class="mb-3">
+                                                <label for="newUsername" class="form-label">Username Baru</label>
+                                                <input type="text" class="form-control" id="newUsername">
+                                            </div>
+
+                                            <div class="mb-3">
+                                                <label for="newPassword" class="form-label">Password Baru</label>
+                                                <input type="password" class="form-control" id="newPassword">
+                                            </div>
+
+                                            <div class="mb-3">
+                                                <label for="confirmPassword" class="form-label">Konfirmasi Password</label>
+                                                <input type="password" class="form-control" id="confirmPassword">
+                                            </div>
+
+                                            <h6 class="border-bottom pb-2 mb-3 mt-4">Backup Database</h6>
+                                            
+                                            <div class="d-grid gap-2">
+                                                <button type="button" class="btn btn-info" onclick="backupDatabase()">
+                                                    <i class="fas fa-download me-1"></i>Backup Database
+                                                </button>
+                                                <button type="button" class="btn btn-warning" onclick="clearOldData()">
+                                                    <i class="fas fa-trash me-1"></i>Bersihkan Data Lama
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <hr>
+                                    <div class="d-flex justify-content-end">
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="fas fa-save me-1"></i>Simpan Pengaturan
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Modal Update Status -->
+    <div class="modal fade" id="modalUpdateStatus" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title">
+                        <i class="fas fa-edit me-2"></i>Update Status Siswa
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="formUpdateStatus">
+                        <input type="hidden" id="updateSiswaId">
+                        <div class="mb-3">
+                            <label for="updateStatus" class="form-label">Status</label>
+                            <select class="form-select" id="updateStatus" required>
+                                <option value="Pending">Pending</option>
+                                <option value="Diterima">Diterima</option>
+                                <option value="Ditolak">Ditolak</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="updateKeterangan" class="form-label">Keterangan</label>
+                            <textarea class="form-control" id="updateKeterangan" rows="3"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="button" class="btn btn-primary" onclick="saveStatusUpdate()">
+                        <i class="fas fa-save me-1"></i>Simpan
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white py-4">
+        <div class="container text-center">
+            <p class="mb-0">&copy; 2025 SMA Negeri 1. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="js/admin.js"></script>
+</body>
+</html>
