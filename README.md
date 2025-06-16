@@ -223,27 +223,6 @@ Edit file `php/config.php` dan `js/script.js`
 - [ ] Advanced reporting
 - [ ] Batch operations
 - [ ] Role-based access control
-
-## 🤝 Kontribusi
-
-1. Fork repository
-2. Buat branch feature (`git checkout -b feature/AmazingFeature`)
-3. Commit changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to branch (`git push origin feature/AmazingFeature`)
-5. Open Pull Request
-
-## 📞 Support
-
-Jika ada pertanyaan atau butuh bantuan:
-- Email: info@sman1.sch.id
-- WhatsApp: +62-XXX-XXXX-XXXX
-
-## 📄 License
-
-Distributed under the MIT License. See `LICENSE` for more information.
-
----
-
 **Dibuat dengan ❤️ untuk pendidikan yang lebih baik**
 
 *SMA Negeri 1 - Excellence in Education*
